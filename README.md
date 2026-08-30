@@ -2,9 +2,9 @@
 
 **어셈블리 코드 역분석 및 c언어로 복원하기!**
 
-## 01. 어셈블리 기초 연산 분석
+## ◼️어셈블리 기초 연산 분석_1
 
-### 1. 어셈블리 코드(Assembly)
+### 어셈블리 코드(Assembly)
 ```assembly
 check_password:
   push rbp
@@ -23,7 +23,7 @@ check_password:
 **질문 2.**
   ```이 어셈블리 로직을 C 언어의 if 조건문 형태로 간단히 나타낸다면 어떤 식일까요?```
 
-### 02. 역분석 과정
+### 01. 역분석 과정
   mov eax, edi: 입력값(edi)을 eax에 복사  
   add eax, 0x10: eax + 16(10진수)  
   sub eax, 0x5: eax - 5(10진수)  
@@ -34,7 +34,7 @@ check_password:
   역계산:x = 32 + 5 - 16
                      = 21
 
-### 03. c언어로 복원
+### 02. c언어로 복원
 ## 첫 번째
     int main() {
       int x;
@@ -60,5 +60,57 @@ check_password:
       } else {
         return 0;  //실패 (mov eax, 0)
         }
-    }
+    }  
+    
+
+## ◼️어셈블리 기초 연산 분석_2 
   
+### 어셈블리 코드(Assembly)
+```assembly
+  push rbp
+  mov rbp, rsp
+  mov eax, 0x10
+  add eax, 0x05
+  sub eax, 0x03
+  mov eax, 0
+  pop rbp
+  ret
+```
+**질문 1.**
+  ```최종 eax에 들어갈 10진수 값은 얼마일까요? ```  
+  **질문 2.**
+  ```이걸 C 언어 코드로 복원하면 어떻게 써볼 수 있을까요?```
+
+### 01. 역분석 과정
+  mov eax, 0x10: 16(10진수)을 eax에 복사  
+  add eax, 0x05: eax + 5(10진수)  
+  sub eax, 0x03: eax - 3(10진수)
+
+수식: 16 + 5 - 3 = 18  
+               eax = 18
+
+### 02. c언어로 복원
+## 첫 번째
+    int main() {
+      int x = 16;
+      printf("%d + 5 - 3", x);
+
+      return 0;
+    }
+
+## 두 번째(피드백)
+    int main() {
+      int x = 16;
+      printf("%d\n", x + 5 - 3); //잘못된 줄 수정
+
+      return 0;
+    }
+
+## 세 번째(다른 방식)
+    int main() {
+      int x = 16;
+      x = x + 5 - 3;
+      printf("%d\n", x);
+
+      return 0;
+    }
