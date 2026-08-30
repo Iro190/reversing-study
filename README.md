@@ -24,10 +24,10 @@ check_password:
   ```이 어셈블리 로직을 C 언어의 if 조건문 형태로 간단히 나타낸다면 어떤 식일까요?```
 
 ### 02. 역분석 과정
-  mov eax, edi: 입력값(edi)을 eax에 복사
-  add eax, 0x10: eax + 16(10진수)
-  sub eax, 0x5: eax - 5(10진수)
-  cmp eax, 0x20: 연산 결과가 32(10진수)인지 비교
+  mov eax, edi: 입력값(edi)을 eax에 복사  
+  add eax, 0x10: eax + 16(10진수)  
+  sub eax, 0x5: eax - 5(10진수)  
+  cmp eax, 0x20: 연산 결과가 32(10진수)인지 비교  
   je  success: 맞으면 성공
 
   수식:x + 16 - 5 = 32
