@@ -115,3 +115,127 @@ formula: 16 + 5 - 3 = 18
 
       return 0;
     }
+
+  
+## ◼️Assembly basic operation analysis_3 
+  
+### Assembly code
+```assembly
+  push rbp
+  mov rbp, rsp
+  mov eax, 0
+  add ecx, 5
+
+  loop_start:
+  add eax, ecx
+  sub ecx, 1
+  cmp ecx, 0
+  jg loop_start
+
+  mov edx, eax
+  pop rbp
+  ret
+```
+**Q1.**
+  ```What are the final decimal values ​​stored in the eax and edx registers after this assembly code is fully executed? ```  
+  
+**Q2.**
+  ```Try to reconstruct the core logic of this code (what calculations it performs) in C. (You can use whichever is more comfortable, a for loop or a while loop.)```
+
+### 01. Reverse calculation process
+  mov eax, 0 - Copy 0 to eax  
+  mov ecx, 5 - Copy 5 to ecx  
+  
+  loop_start:  
+  add eax, ecx - Add eax and ecx  
+  sub ecx, 1 - Sub 1 from ecx  
+  cmp ecx, 0 - Cmp ecx(4) and 0  
+  jg loop_start - Since ecx(4) is greater than 0, jump back to loop_start  
+  
+  mov edx, eax - Copy edx to eax
+
+answer_1 (worng)  
+formula: 0 + 5 - 1 = 4  
+= Since the line mov edx, eax is outside the loop, the value of eax is 0 and the value of ecx is 5  
+
+answer_2 (Correct)  
+formula:  
+1) eax = 0 + 5 = 5, ecx = 4  
+2) eax = 5 + 4 = 9, ecx = 3  
+3) eax = 9 + 3 = 12, ecx = 2  
+4) eax = 12 + 2 = 14, ecx = 1  
+5) eax = 14 + 1 = 15,ecx = Execute 'mov edx', eax after loop ends  
+
+= It is true that 'mov edx, eax' is outside the loop, but after the loop ends, eax is not 0 but the sum of all values ​​from 5 to 1. So the final answer is eax = 15, edx = 15.
+               
+
+### 02. Restore to C
+## Frist
+    int main() {
+      int a = 0;
+      int b = 5;
+
+      while (b > 0)
+      {
+          a + b - 1;
+          break;
+      } 
+    
+      int c = a;
+      printf("eax = %d, ecx = %d", a, b);
+        
+      return 0;
+    }
+
+## Second(feedback)
+  ```Just catch the continuously repeating flow without the += assignment operator and break.```  
+  
+    int main() {
+      int eax = 0;
+      int ecx = 5;
+
+      // Repeat while ecx is greater than 0
+      while (ecx > 0) {
+          eax += ecx; // add eax, ecx
+          ecx--;      // sub ecx, 1
+        }
+
+      int edx = eax;  // mov edx, eax
+
+      printf("eax = %d, edx = %d, ecx = %d\n", eax, edx, ecx);
+    
+      return 0;
+    }
+
+## Third (different method)
+**Convert to for statement**  
+
+    for (int i = b; i > 0; i--)
+    {
+        a + b - 1;
+    }
+
+**Convert to for statement_2 (feedback)**  
+
+```1. a + b - 1; Adding an assignment operator to the expression```  
+```If you write only a + b - 1;, the CPU performs the calculation but discards the result without storing it anywhere.```
+```In assembly, add eax and ecx store the result in eax -> a += i; or a = a + i;```
+```The assembly sub ecx, 1 subtracts 1 from the value of ecx -> the i-- in the for loop performs this role instead.```
+  
+```2. Since the for loop condition started with 'int i = b;', the decrementing variable 'i' must be added instead of 'b' inside the loop.```
+   
+    int main() {
+      int a = 0;
+      int b = 5;
+
+      // It repeats as ecx(b) decreases from 5 to 1
+      for (int i = b; i > 0; i--) {
+          a += i;  // Performs the role of add eax, ecx and performs cumulative addition
+      }
+
+      int c = a;   // mov edx, eax
+
+      printf("eax(a) = %d, edx(c) = %d\n", a, c); // 15, 15
+      return 0;
+    }
+    
