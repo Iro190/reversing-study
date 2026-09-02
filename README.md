@@ -239,3 +239,141 @@ formula:
       return 0;
     }
     
+## ◼️Assembly basic operation analysis_4 
+  
+### Assembly code
+```assembly
+check_value:
+  push rbp
+  mov rbp, rsp
+
+  mov eax, edi
+  cmp eax, 0x0A
+  jle is_small
+
+  add ecx, 0x05
+  jmp cleanup
+
+is_small:
+  sub ecx, 2
+
+cleanup:
+  pop rbp
+  ret
+```
+**Q1.**
+  ```Will the returned eax value be different when the decimal number 15 is entered as the input value edi to the check_value function? ```  
+  
+**Q2.**
+  ```Conversely, what is the returned value of eax when the decimal number 7 is entered as the input value edi?```  
+
+**Q3.**
+  ```Try to reconstruct the entire logic of this assembly function into the form of the C language function int check_value(int x)```
+
+### 01. Reverse calculation process
+  mov eax, edi - Copy the first parameter (x) to eax  
+    cmp eax, 0x0A - Compare eax with decimal 10 (0x0A)  
+    jle is_small - If eax is 10 or less (Less or Equal), jump to is_small  
+    add eax, 0x05 - If greater than 10, eax + 5  
+    jmp cleanup - Go unconditionally to the cleanup point  
+    
+is_small:  
+    sub eax, 0x02 - If 10 or less, eax - 2  
+    
+formula: 15 + 5 = 20 (Q1) 15>10  
+formula: 7 - 2 = 5 (Q2) 7<10
+
+### 02. Restore to C
+## Frist  
+**In the case of the 15th**  
+```
+int check_value(int x);  
+
+int main() {  
+  int result = check_value(15);  
+  return 0;  
+}  
+
+int check_value(int x) {  
+    if (x <= 10)  
+    {  
+       printf("%d", x - 2);  
+    }  
+    else{  
+        printf("%d", x + 5);  
+        }  
+        
+    return 0;  
+}
+```
+
+**In case of 7**  
+```int check_value(int x);
+
+int main() {
+    int result = check_value(7);
+    return 0;
+}
+
+int check_value(int x) {
+    if (x <= 10)
+    {
+       printf("%d", x - 2);
+    }
+    else{
+        printf("%d", x + 5);
+    }
+    
+    return 0;
+}
+```
+
+## Second(feedback)
+  ```The eax value calculated in assembly is used as the function's return value.```  
+  
+  ```While printing with printf is a very good way to verify the operation, to match the principle of returning the eax value at the moment of ret in assembly, writing it in a form that immediately returns the calculated result as shown below will result in a more accurate match with the code restored by the decompiler.```  
+  
+```int check_value(int x) {
+    if (x <= 10) {
+        return x - 2;  
+    } else {
+        return x + 5;  
+    }
+}
+
+int main() {  
+    printf("15 결과: %d\n", check_value(15)); // 20  
+    printf("7 결과: %d\n", check_value(7));   // 5  
+    return 0;  
+}
+```
+## Third (different method)
+**I tried changing it to read data inside the function using scanf**  
+
+```int check_value(int x) {
+    scanf("%d", &x);
+
+    if (x <= 10)
+    {
+        return x - 2;
+    } else {
+        return x + 5;
+     }
+   
+  return 0;  
+}  
+```
+**Modify code after feedback**  
+```int check_value() {  
+    int x;
+    scanf("%d", &x);
+
+    if (x <= 10)
+    {
+        return x - 2;
+    } else {
+        return x + 5;
+     }
+   
+}
+```  
