@@ -376,4 +376,75 @@ int main() {
      }
    
 }
-```  
+```
+
+## ◼️Assembly basic operation analysis_5 
+  
+### Assembly code
+```assembly
+; rdi: starting address of array (int arr[])
+; esi: index number of array (int index)
+
+get_element:
+    push rbp
+    mov rbp, rsp
+
+    movsxd rax, esi
+    mov eax, [rdi + rax*4]
+    add eax, 10
+
+    pop rbp
+    ret 
+```
+**Q1.**
+  ```Given the C array `int arr[3] = {5, 12, 30};`, what is the value of `eax` returned when `get_element(arr, 1)` is called? (Array indices start from 0.) ```  
+  
+**Q2.**
+  ```Try to restore the entire assembly function into the form of the C language function int get_element(int arr[], int index).```  
+
+### 01. Reverse calculation process
+  get_element:  
+    push rbp  
+    mov rbp, rsp  
+    movsxd rax, esi - Extend index (esi) to 64-bit (rax)  
+    mov eax, [rdi + rax*4] - Get array elements  
+    add eax, 10 - Add 10 to the retrieved value  
+    pop rbp  
+    ret  
+    
+formula: 12 + 10 = 22 (Q1)
+
+### 02. Restore to C
+## Frist    
+```
+int get_element(int arr[], int index) {
+    arr[5, 12, 30];
+
+    int result = arr[1] + 10 ;
+
+    printf("%d", result);
+    return 0;
+```
+
+## Second(feedback)
+  ```1. Direct declaration of array values ​​is only possible within the main function.```  
+  
+  ```2. To use the passed index like the assembly [rdi + rax*4] syntax, you must write arr[index].```  
+  
+```
+int get_element(int arr[], int index) {
+    // mov eax, [rdi + rax*4] -> Accessing the arr[index] element
+    // add eax, 10           -> 10 plus
+    return arr[index] + 10;
+}
+
+int main() {
+    int arr[3] = {5, 12, 30};
+
+    // When call get_element(arr, 1), index 1 (12) + 10 = 22 is returned.
+    int result = get_element(arr, 1);
+
+    printf("resulte: %d\n", result); // 22
+    return 0;
+}
+```
