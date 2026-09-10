@@ -424,6 +424,7 @@ int get_element(int arr[], int index) {
 
     printf("%d", result);
     return 0;
+}
 ```
 
 ## Second(feedback)
@@ -446,5 +447,96 @@ int main() {
 
     printf("resulte: %d\n", result); // 22
     return 0;
+}
+```
+
+
+## ◼️Assembly basic operation analysis_6 
+  
+### Assembly code
+```assembly
+; rdi: starting address of array (int arr[])
+; esi: index number of array (int index)
+; edx: New value to save (int value)
+
+update_element:
+    push rbp
+    mov rbp, rsp
+    movsxd rax, esi
+    mov [rdi + rax*4], edx
+    mov eax, [rdi + rax*4]
+    add eax, 5
+    pop rbp
+    ret
+```
+**Q1.**
+  ```Given the C array `int arr[3] = {10, 20, 30};`, what is the final returned value of `eax` when `update_element(arr, 1, 50)` is called? ```  
+  
+**Q2.**
+  ```After the function is executed, what will the value remaining in arr[1] be?```  
+
+**03.**  
+```Try restoring the entire assembly function into the form of the C language function int update_element(int arr[], int index, int value).```
+
+### 01. Reverse calculation process
+  update_element:  
+    push rbp  
+    mov rbp, rsp  
+    movsxd rax, esi - Extend index (esi) to 64 bits  
+    mov [rdi + rax*4], edx - Store the edx value at the corresponding position in the array  
+    mov eax, [rdi + rax*4] - Read the array element just modified into eax  
+    add eax, 5 - Add 5 to eax      
+    pop rbp  
+    ret 
+    
+update_element(arr, 1, 50)  
+first argument(arr) -> rdi(starting address of array)  
+second argument(1) -> esi(Array index number = position)  
+third argument(50) -> edx(new value to change)  
+arr[1] = 20 -> arr[1] = 50  
+
+formula: 50 + 5 = 55 (Q1)  
+
+formula: arr[1] = 20 -> arr[1] = 50  
+                 = 50 (Q2)  
+
+### 02. Restore to C
+## Frist    
+```
+int update_element(int arr[], int index, int valu) {
+    arr[1] = 50;
+    return arr[index] +5;
+}
+
+int main() {
+    int arr[3] ={10, 20, 30};
+
+    int result = update_element(arr, 1, 50);
+    printf("%d\n", result);
+
+    return 0;   
+}
+```
+
+## Second(feedback)
+  ```Even if you input a fixed value like `arr[1] = 50;`, 55 is output correctly in the current test (index 1, value 50); however, if you pass a different index or value, such as `update_element(arr, 2, 100)`, the behavior changes.```  
+  
+  ```If you modify the assembly code to use variable parameters (index, value) while keeping the `[rdi + rax*4]` and `edx` parameters intact, it becomes a perfect function capable of handling any input value.```  
+  
+```
+int update_element(int arr[], int index, int valu) {
+    arr[index] = value;  //Assigning values ​​to array elements
+    return arr[index] +5;
+}
+
+// eax = arr[index]; (Reading the value of an array element)
+
+int main() {
+    int arr[3] ={10, 20, 30};
+
+    int result = update_element(arr, 1, 50);
+    printf("%d\n", result);
+
+    return 0;   
 }
 ```
