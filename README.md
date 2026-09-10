@@ -540,3 +540,10 @@ int main() {
     return 0;   
 }
 ```
+
+## Key takeaways  
+```1. Changing array value (Write): The point that the statement `arr[index] = value;` is converted into a form that assigns a value to the assembly memory address [rdi + rax*4].```  
+
+```2. Parameter passing rule: A flow where values ​​are passed in order: first (rdi), second (esi), and third (edx).```  
+
+```3. Return after operation: The final result is stored in eax and passed as the return value.```
