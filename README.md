@@ -378,7 +378,7 @@ int main() {
 }
 ```
 
-## ◼️Assembly basic operation analysis_5 
+## ◼️Assembly array_5 
   
 ### Assembly code
 ```assembly
@@ -451,7 +451,7 @@ int main() {
 ```
 
 
-## ◼️Assembly basic operation analysis_6 
+## ◼️Assembly array_6 
   
 ### Assembly code
 ```assembly
@@ -548,7 +548,7 @@ int main() {
 
 ```3. Return after operation: The final result is stored in eax and passed as the return value.```
 
-## ◼️Assembly basic operation analysis_7 
+## ◼️Assembly pointer_7 
   
 ### Assembly code
 ```assembly
