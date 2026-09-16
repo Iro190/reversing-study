@@ -547,3 +547,108 @@ int main() {
 ```2. Parameter passing rule: A flow where values ​​are passed in order: first (rdi), second (esi), and third (edx).```  
 
 ```3. Return after operation: The final result is stored in eax and passed as the return value.```
+
+## ◼️Assembly basic operation analysis_7 
+  
+### Assembly code
+```assembly
+; rdi: The address of the first variable (int *a)
+; rsi: The address of the second variable (int *b)
+
+swap_and_add:
+    push rbp
+    mov rbp, rsp
+
+    mov eax, [rdi]
+    mov ecx, [rsi]
+
+    mov [rdi], ecx
+    mov [rsi], eax
+
+    add eax, ecx
+    pop rbp
+    ret
+```
+**Q1.**
+  ```If int x = 10, y = 20; what is the final returned value of eax when swap_and_add(&x, &y) is called? ```  
+  
+**Q2.**
+  ```After the function finishes executing, how will the values ​​stored in the variables x and y have changed, respectively?```  
+
+**03.**  
+```Try restoring this assembly code to the original C language function int swap_and_add(int *a, int *b).```
+
+### 01. Reverse calculation process
+  mov eax, [rdi] - Read the value at the address pointed to by rdi  
+  mov ecx, [rsi] - Read the value at the address pointed to by rsi  
+  
+  mov [rdi], ecx - Assign the value of ecx to the address pointed to by rdi  
+  mov [rsi], eax - Assign the value of eax to the address pointed to by rsi  
+  
+  add eax, ecx - Add eax and ecx  
+  
+formula: 10(x) + 20(y) = 30 (Q1)  
+
+formula: x = 10, y = 20 (Q2)  
+
+### 02. Restore to C
+## Frist    
+```
+int swap_and_add(int *a, int *b) {
+    int x = 10;
+    int y = 20;
+
+    *a = &x;
+    *b = &y;
+
+    return *a + *b;
+
+}
+
+int main() {
+    int x = 10;
+    int y = 20;
+    int result = swap_and_add;
+    printf("%d", result);
+    return 0;
+}
+```
+
+## Second(feedback)
+ 1. *a = &x; part (Type mismatch and variable placement)
+ Since a is a pointer variable (int *), *a means the "actual value (int) pointed to by the address." A syntax error occurs because you are trying to put the address value &x here. 
+  
+ 2. Method of calling the swap_and_add function
+The function definition was set to accept pointers (addresses) as (int *a, int *b), and in main(), it was called as swap_and_add; without any arguments.
+
+To pass the addresses of x and y, it must be in the form of swap_and_add(&x, &y).
+  
+```
+int swap_and_add(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+
+    return *a + *b;
+
+}
+
+int main() {
+    int x = 10;
+    int y = 20;
+    
+    int result = swap_and_add(&x, &y);
+    printf("%d\n", result);
+    printf("x: %d, y: %d\n", x, y);
+
+    return 0;
+}
+```
+
+## Key takeaways  
+```1. The substance of the pointer (*a): The value of the actual memory space seen by following the address written on the notepad, opening the door, and looking inside.```  
+
+```2. Necessity of temp (register): A temporary pocket to change memory values ​​without loss.```  
+
+```3. Assembly Mapping: The fact that pointer operations in the C language correspond one-to-one with the rdi/rsi address registers and the [rdi] dereference instruction at the low level.```
+
